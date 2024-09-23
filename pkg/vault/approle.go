@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	vault "github.com/hashicorp/vault/api"
@@ -64,7 +65,10 @@ func (c *appRoleClient) login() (*vault.Secret, error) {
 		return nil, fmt.Errorf("unable to create AppRole auth: %w", err)
 	}
 
-	authInfo, err := c.v.Auth().Login(context.Background(), appRoleAuth)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	authInfo, err := c.v.Auth().Login(ctx, appRoleAuth)
 	if err != nil {
 		return nil, fmt.Errorf("unable to authenticate with Vault: %w", err)
 	}
