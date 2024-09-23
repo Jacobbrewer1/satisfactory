@@ -47,16 +47,41 @@ func (s *service) onServerInfo(_ *discordgo.Session, i *discordgo.InteractionCre
 		slog.Error("Error deleting server info", slog.String(logging.KeyError, err.Error()))
 		return
 	}
+}
 
-	//err = s.s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-	//	Type: discordgo.InteractionResponseChannelMessageWithSource,
-	//	Data: &discordgo.InteractionResponseData{
-	//		Content: msg,
-	//		Flags:   discordgo.MessageFlagsEphemeral,
-	//	},
-	//})
-	//if err != nil {
-	//	slog.Error("Error sending server info", slog.String(logging.KeyError, err.Error()))
-	//	return
-	//}
+func (s *service) onServerCredentials(_ *discordgo.Session, i *discordgo.InteractionCreate) {
+	// Respond to the user with "Just getting the server credentials"
+	err := s.s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Flags: discordgo.MessageFlagsEphemeral,
+		},
+	})
+	if err != nil {
+		slog.Error("Error responding to server credentials", slog.String(logging.KeyError, err.Error()))
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Get the server credentials from redis
+	serverCredentials, err := redisgo.StringMap(redis.Conn.DoCtx(ctx, "HGETALL", "server_credentials"))
+	if err != nil {
+		slog.Error("Error getting server credentials", slog.String(logging.KeyError, err.Error()))
+		return
+	}
+
+	// Send the server credentials to the user
+	msg := "IP: " + serverCredentials["ip"] + "\n" +
+		"Port: " + serverCredentials["port"] + "\n" +
+		"Password: " + serverCredentials["password"]
+
+	_, err = s.s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
+		Content: utils.Ptr(msg),
+	})
+	if err != nil {
+		slog.Error("Error deleting server credentials", slog.String(logging.KeyError, err.Error()))
+		return
+	}
 }

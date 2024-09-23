@@ -58,7 +58,8 @@ func (s *service) registerHandlers() {
 	s.s.AddHandler(s.onInteractionCreate)
 
 	s.interactionHandlers = map[string]func(*discordgo.Session, *discordgo.InteractionCreate){
-		serverInfoCmdID: s.onServerInfo,
+		serverInfoCmdID:        s.onServerInfo,
+		serverCredentialsCmdID: s.onServerCredentials,
 	}
 }
 
