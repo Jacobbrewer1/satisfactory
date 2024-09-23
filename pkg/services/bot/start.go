@@ -19,10 +19,21 @@ func (s *service) Start() error {
 	s.registerHandlers()
 	slog.Debug("Handlers registered")
 
+	s.s.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsAll)
 	err = s.s.Open()
 	if err != nil {
 		return fmt.Errorf("failed to open discord session: %w", err)
 	}
+
+	err = s.s.UpdateStatusComplex(discordgo.UpdateStatusData{
+		Activities: []*discordgo.Activity{
+			{
+				Name: "Comply!",
+				Type: discordgo.ActivityTypeWatching,
+				URL:  "",
+			},
+		},
+	})
 
 	s.removeAllCommands()
 
