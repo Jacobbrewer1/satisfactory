@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	vault "github.com/hashicorp/vault/api"
@@ -76,7 +77,10 @@ func (c *userPassClient) login() (*vault.Secret, error) {
 		return nil, fmt.Errorf("unable to initialize userpass auth method: %w", err)
 	}
 
-	authInfo, err := c.v.Auth().Login(context.Background(), userpassAuth)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	authInfo, err := c.v.Auth().Login(ctx, userpassAuth)
 	if err != nil {
 		return nil, fmt.Errorf("unable to login to userpass auth method: %w", err)
 	}
