@@ -24,6 +24,19 @@ func (s *service) Start() error {
 		return fmt.Errorf("failed to open discord session: %w", err)
 	}
 
+	err = s.s.UpdateStatusComplex(discordgo.UpdateStatusData{
+		Activities: []*discordgo.Activity{
+			{
+				Name: "Comply!",
+				Type: discordgo.ActivityTypeWatching,
+				URL:  "",
+			},
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to update status: %w", err)
+	}
+
 	s.removeAllCommands()
 
 	slog.Debug("Registering commands")
