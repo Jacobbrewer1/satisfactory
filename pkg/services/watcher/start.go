@@ -25,6 +25,8 @@ func (s *service) Start() error {
 			if err := s.processMessage(got[1]); err != nil {
 				return fmt.Errorf("process message: %w", err)
 			}
+
+			slog.Debug("Message processed")
 		}
 	}
 }
