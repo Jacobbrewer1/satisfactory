@@ -34,6 +34,9 @@ func (s *service) Start() error {
 			},
 		},
 	})
+	if err != nil {
+		return fmt.Errorf("failed to update status: %w", err)
+	}
 
 	s.removeAllCommands()
 
