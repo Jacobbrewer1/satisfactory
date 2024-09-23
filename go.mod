@@ -7,6 +7,7 @@ require (
 	github.com/alexliesenfeld/health v0.8.0
 	github.com/bwmarrin/discordgo v0.28.1
 	github.com/go-sql-driver/mysql v1.8.1
+	github.com/gomodule/redigo v1.9.2
 	github.com/google/subcommands v1.2.0
 	github.com/gorilla/mux v1.8.1
 	github.com/hashicorp/vault/api v1.15.0

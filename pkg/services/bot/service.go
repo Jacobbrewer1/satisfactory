@@ -11,8 +11,10 @@ type Service interface {
 }
 
 type service struct {
-	token string
-	s     *discordgo.Session
+	token               string
+	s                   *discordgo.Session
+	interactionHandlers map[string]func(*discordgo.Session, *discordgo.InteractionCreate)
+	shutdownFunc        func()
 }
 
 func NewService(token string) Service {
