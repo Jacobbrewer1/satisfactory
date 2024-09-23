@@ -11,7 +11,8 @@ import (
 	"runtime"
 
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
-	svc "github.com/Jacobbrewer1/satisfactory/pkg/services/bot"
+	"github.com/Jacobbrewer1/satisfactory/pkg/repositories/redis"
+	svc "github.com/Jacobbrewer1/satisfactory/pkg/services/watcher"
 	uhttp "github.com/Jacobbrewer1/satisfactory/pkg/utils/http"
 	"github.com/Jacobbrewer1/satisfactory/pkg/vault"
 	"github.com/google/subcommands"
@@ -89,12 +90,6 @@ func (s *startCmd) Execute(ctx context.Context, f *flag.FlagSet, _ ...interface{
 
 	<-ctx.Done()
 	slog.Info("Shutting down application")
-
-	if err := service.Stop(); err != nil {
-		slog.Error("Error stopping bot", slog.String(logging.KeyError, err.Error()))
-		return subcommands.ExitFailure
-	}
-
 	if err := srv.Shutdown(ctx); err != nil {
 		slog.Error("Error shutting down application", slog.String(logging.KeyError, err.Error()))
 		return subcommands.ExitFailure
@@ -122,14 +117,18 @@ func (s *startCmd) setup(ctx context.Context, r *mux.Router) (service svc.Servic
 
 	slog.Debug("Vault client created")
 
-	vs, err := vc.GetSecret(ctx, v.GetString("vault.bot.token_path"))
+	_, err = vc.GetSecret(ctx, v.GetString("vault.bot.token_path"))
 	if errors.Is(err, vault.ErrSecretNotFound) {
 		return nil, fmt.Errorf("secrets not found in vault: %s", v.GetString("vault.bot.token_path"))
 	} else if err != nil {
 		return nil, fmt.Errorf("error getting secrets from vault: %w", err)
 	}
 
-	service = svc.NewService(vs.GetKvv2(v.GetString("vault.bot.token_key")).(string))
+	pool := redis.NewPool(v.GetString("redis.address"), v.GetInt("redis.db"),
+		v.GetString("redis.username"), v.GetString("redis.password"))
+	redis.Conn = pool
+
+	service = svc.NewService(ctx, v.GetString("redis.list_name"))
 
 	r.HandleFunc("/metrics", uhttp.InternalOnly(promhttp.Handler())).Methods(http.MethodGet)
 	r.HandleFunc("/health", uhttp.InternalOnly(healthHandler())).Methods(http.MethodGet)
