@@ -66,13 +66,11 @@ func (s *service) handleDockerInfo(info dockerInfo) error {
 
 	// Compare the new info to the old info
 	if got["State"] != info.State {
-		// TODO: Add alerting
 		slog.Debug("State changed", slog.String("old", got["State"]), slog.String("new", info.State))
-	}
-
-	if got["Status"] != info.Status {
-		// TODO: Add alerting
-		slog.Debug("Status changed", slog.String("old", got["Status"]), slog.String("new", info.Status))
+		err = s.alertManager.SendDiscordAlert(fmt.Sprintf("Server state changed from `%s` to `%s`", got["State"], info.State))
+		if err != nil {
+			return fmt.Errorf("send discord alert: %w", err)
+		}
 	}
 
 	// Store all the info

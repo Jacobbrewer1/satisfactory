@@ -1,20 +1,25 @@
 package watcher
 
-import "context"
+import (
+	"context"
+
+	"github.com/Jacobbrewer1/satisfactory/pkg/alerts"
+)
 
 type Service interface {
 	Start() error
 }
 
 type service struct {
-	ctx context.Context
-
-	listName string
+	ctx          context.Context
+	alertManager alerts.DiscordManager
+	listName     string
 }
 
-func NewService(ctx context.Context, listName string) Service {
+func NewService(ctx context.Context, alertManager alerts.DiscordManager, listName string) Service {
 	return &service{
-		ctx:      ctx,
-		listName: listName,
+		ctx:          ctx,
+		alertManager: alertManager,
+		listName:     listName,
 	}
 }
