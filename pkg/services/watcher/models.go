@@ -28,3 +28,23 @@ type dockerInfo struct {
 	State        string `json:"State"`
 	Status       string `json:"Status"`
 }
+
+type serverDetails struct {
+	Data *struct {
+		ServerGameState *ServerGameState `json:"serverGameState"`
+	} `json:"data"`
+}
+
+type ServerGameState struct {
+	ActiveSessionName   string  `json:"activeSessionName"`
+	NumConnectedPlayers int     `json:"numConnectedPlayers"`
+	PlayerLimit         int     `json:"playerLimit"`
+	TechTier            int     `json:"techTier"`
+	ActiveSchematic     string  `json:"activeSchematic"`
+	GamePhase           string  `json:"gamePhase"`
+	IsGameRunning       bool    `json:"isGameRunning"`
+	TotalGameDuration   int     `json:"totalGameDuration"`
+	IsGamePaused        bool    `json:"isGamePaused"`
+	AverageTickRate     float64 `json:"averageTickRate"`
+	AutoLoadSessionName string  `json:"autoLoadSessionName"`
+}

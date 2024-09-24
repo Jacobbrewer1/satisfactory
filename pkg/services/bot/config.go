@@ -5,6 +5,7 @@ import "github.com/bwmarrin/discordgo"
 const (
 	serverInfoCmdID        = "server-info"
 	serverCredentialsCmdID = "server-credentials"
+	severDetailsCmdID      = "server-details"
 )
 
 var (
@@ -18,6 +19,11 @@ var (
 			Name:        serverCredentialsCmdID,
 			Type:        discordgo.ChatApplicationCommand,
 			Description: "Server Credentials",
+		},
+		{
+			Name:        severDetailsCmdID,
+			Type:        discordgo.ChatApplicationCommand,
+			Description: "Server Details",
 		},
 	}
 )
