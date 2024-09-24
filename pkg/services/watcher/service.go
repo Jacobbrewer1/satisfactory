@@ -14,7 +14,6 @@ type service struct {
 	ctx          context.Context
 	alertManager alerts.DiscordManager
 	listName     string
-	alertsURL    string
 }
 
 func NewService(ctx context.Context, alertManager alerts.DiscordManager, listName string) Service {
