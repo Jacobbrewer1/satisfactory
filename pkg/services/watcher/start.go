@@ -1,32 +1,69 @@
 package watcher
 
 import (
-	"fmt"
+	"context"
 	"log/slog"
 
+	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	"github.com/Jacobbrewer1/satisfactory/pkg/repositories/redis"
 	redisgo "github.com/gomodule/redigo/redis"
 )
 
 func (s *service) Start() error {
+	go s.watchServerInfo(s.ctx)
+	go s.watchServerDetails(s.ctx)
+
+	<-s.ctx.Done()
+
+	return nil
+}
+
+func (s *service) watchServerInfo(ctx context.Context) {
 	for {
 		select {
-		case <-s.ctx.Done():
-			return fmt.Errorf("context done: %w", s.ctx.Err())
+		case <-ctx.Done():
+			slog.Debug("Context done")
+			return
 		default:
-			got, err := redisgo.ByteSlices(redis.Conn.DoCtx(s.ctx, "BLPOP", s.listName, 0))
+			got, err := redisgo.ByteSlices(redis.Conn.DoCtx(ctx, "BLPOP", s.serverInfoListName, 0))
 			if err != nil {
-				return fmt.Errorf("redis lpop: %w", err)
+				slog.Error("Error getting message from redis info list", slog.String(logging.KeyError, err.Error()))
+				continue
 			} else if got == nil {
 				slog.Debug("No message to process")
 				continue
 			}
 
-			if err := s.processMessage(got[1]); err != nil {
-				return fmt.Errorf("process message: %w", err)
+			if err := s.processInfoMessage(got[1]); err != nil {
+				slog.Error("Error processing info message", slog.String(logging.KeyError, err.Error()))
 			}
 
-			slog.Debug("Message processed")
+			slog.Debug("Info message processed")
+		}
+	}
+}
+
+func (s *service) watchServerDetails(ctx context.Context) {
+	for {
+		select {
+		case <-ctx.Done():
+			slog.Debug("Context done")
+			return
+		default:
+			got, err := redisgo.ByteSlices(redis.Conn.DoCtx(ctx, "BLPOP", s.serverDetailsListName, 0))
+			if err != nil {
+				slog.Error("Error getting message from redis details list", slog.String(logging.KeyError, err.Error()))
+				continue
+			} else if got == nil {
+				slog.Debug("No message to process")
+				continue
+			}
+
+			if err := s.processDetailsMessage(got[1]); err != nil {
+				slog.Error("Error processing details message", slog.String(logging.KeyError, err.Error()))
+			}
+
+			slog.Debug("Details message processed")
 		}
 	}
 }

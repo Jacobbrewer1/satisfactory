@@ -1,11 +1,16 @@
 package bot
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
+	"strconv"
+	"time"
 
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
+	"github.com/Jacobbrewer1/satisfactory/pkg/repositories/redis"
 	"github.com/bwmarrin/discordgo"
+	redisgo "github.com/gomodule/redigo/redis"
 )
 
 func (s *service) Start() error {
@@ -24,19 +29,6 @@ func (s *service) Start() error {
 		return fmt.Errorf("failed to open discord session: %w", err)
 	}
 
-	err = s.s.UpdateStatusComplex(discordgo.UpdateStatusData{
-		Activities: []*discordgo.Activity{
-			{
-				Name: "Comply!",
-				Type: discordgo.ActivityTypeWatching,
-				URL:  "",
-			},
-		},
-	})
-	if err != nil {
-		return fmt.Errorf("failed to update status: %w", err)
-	}
-
 	s.removeAllCommands()
 
 	slog.Debug("Registering commands")
@@ -45,6 +37,8 @@ func (s *service) Start() error {
 		return fmt.Errorf("failed to register commands: %w", err)
 	}
 	slog.Debug("Commands registered")
+
+	go s.handleBotStatus()
 
 	return nil
 }
@@ -73,6 +67,7 @@ func (s *service) registerHandlers() {
 	s.interactionHandlers = map[string]func(*discordgo.Session, *discordgo.InteractionCreate){
 		serverInfoCmdID:        s.onServerInfo,
 		serverCredentialsCmdID: s.onServerCredentials,
+		severDetailsCmdID:      s.onServerDetails,
 	}
 }
 
@@ -109,4 +104,51 @@ func (s *service) removeRegisteredCommands(registeredCommands []*discordgo.Appli
 func (s *service) Stop() error {
 	s.shutdownFunc()
 	return s.s.Close()
+}
+
+func (s *service) handleBotStatus() {
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		num, err := s.getPlayersConnected()
+		if err != nil {
+			slog.Error("Failed to get players connected", slog.String(logging.KeyError, err.Error()))
+			continue
+		}
+
+		err = s.s.UpdateStatusComplex(discordgo.UpdateStatusData{
+			Activities: []*discordgo.Activity{
+				{
+					Name: fmt.Sprintf("%d players", num),
+					Type: discordgo.ActivityTypeWatching,
+					URL:  "",
+				},
+			},
+		})
+		if err != nil {
+			slog.Error("Failed to update bot status", slog.String(logging.KeyError, err.Error()))
+			continue
+		}
+
+		slog.Debug("Bot status updated")
+	}
+}
+
+func (s *service) getPlayersConnected() (int, error) {
+	// Get players connected to the server from redis
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	got, err := redisgo.StringMap(redis.Conn.DoCtx(ctx, "HGETALL", "server_details"))
+	if err != nil {
+		return 0, fmt.Errorf("failed to get players connected: %w", err)
+	}
+
+	playersConnected, err := strconv.Atoi(got["NumConnectedPlayers"])
+	if err != nil {
+		return 0, fmt.Errorf("failed to convert players connected to int: %w", err)
+	}
+
+	return playersConnected, nil
 }

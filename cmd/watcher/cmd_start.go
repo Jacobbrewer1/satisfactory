@@ -130,7 +130,7 @@ func (s *startCmd) setup(ctx context.Context, r *mux.Router) (service svc.Servic
 	redis.Conn = pool
 
 	am := alerts.NewDiscordManager(vs.GetKvv2(v.GetString("vault.bot.alerts_url_key")).(string))
-	service = svc.NewService(ctx, am, v.GetString("redis.list_name"))
+	service = svc.NewService(ctx, am, v.GetString("redis.info_list_name"), v.GetString("redis.details_list_name"))
 
 	r.HandleFunc("/metrics", uhttp.InternalOnly(promhttp.Handler())).Methods(http.MethodGet)
 	r.HandleFunc("/health", uhttp.InternalOnly(healthHandler())).Methods(http.MethodGet)
