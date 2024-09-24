@@ -10,6 +10,7 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/Jacobbrewer1/satisfactory/pkg/alerts"
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	"github.com/Jacobbrewer1/satisfactory/pkg/repositories/redis"
 	svc "github.com/Jacobbrewer1/satisfactory/pkg/services/watcher"
@@ -117,7 +118,7 @@ func (s *startCmd) setup(ctx context.Context, r *mux.Router) (service svc.Servic
 
 	slog.Debug("Vault client created")
 
-	_, err = vc.GetSecret(ctx, v.GetString("vault.bot.token_path"))
+	vs, err := vc.GetSecret(ctx, v.GetString("vault.bot.token_path"))
 	if errors.Is(err, vault.ErrSecretNotFound) {
 		return nil, fmt.Errorf("secrets not found in vault: %s", v.GetString("vault.bot.token_path"))
 	} else if err != nil {
@@ -128,7 +129,8 @@ func (s *startCmd) setup(ctx context.Context, r *mux.Router) (service svc.Servic
 		v.GetString("redis.username"), v.GetString("redis.password"))
 	redis.Conn = pool
 
-	service = svc.NewService(ctx, v.GetString("redis.list_name"))
+	am := alerts.NewDiscordManager(vs.GetKvv2(v.GetString("vault.bot.alerts_url_key")).(string))
+	service = svc.NewService(ctx, am, v.GetString("redis.list_name"))
 
 	r.HandleFunc("/metrics", uhttp.InternalOnly(promhttp.Handler())).Methods(http.MethodGet)
 	r.HandleFunc("/health", uhttp.InternalOnly(healthHandler())).Methods(http.MethodGet)
