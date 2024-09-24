@@ -51,7 +51,7 @@ func (s *service) processInfoMessage(msg []byte) error {
 		return fmt.Errorf("unmarshal docker info: %w", err)
 	}
 
-	if err := s.handleDockerInfo(docInfo); err != nil {
+	if err := s.handleDockerInfo(*docInfo); err != nil {
 		return fmt.Errorf("handle docker info: %w", err)
 	}
 
@@ -59,7 +59,7 @@ func (s *service) processInfoMessage(msg []byte) error {
 }
 
 // Store and process the message
-func (s *service) handleDockerInfo(info *dockerInfo) error {
+func (s *service) handleDockerInfo(info dockerInfo) error {
 	// Get the current hash map of docker info
 	got, err := redisgo.StringMap(redis.Conn.DoCtx(s.ctx, "HGETALL", "docker_info"))
 	if err != nil {
