@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"time"
 
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	"github.com/gomodule/redigo/redis"
@@ -49,31 +48,28 @@ type pool struct {
 }
 
 // NewPool returns a new Pool.
-func NewPool(host string, db int, username, password string) {
+func NewPool(poolOpt PoolOption, connOpts ...ConnectionOption) {
+	switch {
+	case poolOpt == nil:
+		panic("poolOpt is nil")
+	case connOpts == nil:
+		panic("connOpts is nil")
+	}
+
 	l := slog.With(slog.String(logging.KeyDal, "redis"))
 
-	conn = &pool{
-		Pool: &redis.Pool{
-			MaxIdle:     3,                 // maximum number of idle connections in the pool (default is 3)
-			MaxActive:   0,                 // unlimited connections to the redis server (default is 10 connections)
-			IdleTimeout: 240 * time.Second, // 4 minutes idle timeout to match the redis server config (default is 300 seconds)
-			Dial: func() (redis.Conn, error) {
-				c, err := redis.Dial(
-					"tcp",
-					host,
-					redis.DialDatabase(db),
-					redis.DialUsername(username),
-					redis.DialPassword(password),
-				)
-				if err != nil {
-					return nil, err
-				}
+	poolConn := new(pool)
+	poolConn.l = l
+	if len(connOpts) != 0 {
+		p := new(redis.Pool)
+		for _, opt := range connOpts {
+			opt(p)
+		}
 
-				return c, nil
-			},
-		},
-		l: l,
+		poolConn.Pool = p
 	}
+
+	poolOpt(poolConn)
 }
 
 // Do will send a command to the server and returns the received reply on a connection from the pool.
