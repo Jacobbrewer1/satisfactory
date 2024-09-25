@@ -110,12 +110,20 @@ func (s *service) handleBotStatus() {
 	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
 
+	currentNum := 0
+
 	for range ticker.C {
 		num, err := s.getPlayersConnected()
 		if err != nil {
 			slog.Error("Failed to get players connected", slog.String(logging.KeyError, err.Error()))
 			continue
 		}
+
+		if num == currentNum {
+			continue
+		}
+
+		currentNum = num
 
 		err = s.s.UpdateStatusComplex(discordgo.UpdateStatusData{
 			Activities: []*discordgo.Activity{
