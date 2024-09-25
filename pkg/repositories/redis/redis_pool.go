@@ -49,11 +49,8 @@ type pool struct {
 
 // NewPool returns a new Pool.
 func NewPool(poolOpt PoolOption, connOpts ...ConnectionOption) {
-	switch {
-	case poolOpt == nil:
-		panic("poolOpt is nil")
-	case connOpts == nil:
-		panic("connOpts is nil")
+	if poolOpt == nil {
+		panic("pool option is required")
 	}
 
 	l := slog.With(slog.String(logging.KeyDal, "redis"))
