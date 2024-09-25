@@ -25,7 +25,7 @@ func healthHandler() http.Handler {
 		health.WithCheck(health.Check{
 			Name: "redis",
 			Check: func(ctx context.Context) error {
-				_, err := redis.Conn.DoCtx(ctx, "PING")
+				_, err := redis.DoCtx(ctx, "PING")
 				return err
 			},
 			Timeout:            3 * time.Second,

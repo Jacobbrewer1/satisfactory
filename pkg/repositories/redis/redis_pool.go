@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"time"
 
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	"github.com/gomodule/redigo/redis"
@@ -13,7 +12,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-var Conn Pool
+var (
+	// conn is the global redis connection pool.
+	conn Pool
+
+	// ErrRedisNotInitialised is returned when the redis connection pool is not initialised.
+	ErrRedisNotInitialised = errors.New("redis connection pool not initialised")
+)
 
 // Latency is the duration of Redis queries.
 var Latency = promauto.NewHistogramVec(
@@ -43,45 +48,25 @@ type pool struct {
 }
 
 // NewPool returns a new Pool.
-func NewPool(host string, db int, username, password string) Pool {
+func NewPool(poolOpt PoolOption, connOpts ...ConnectionOption) {
+	if poolOpt == nil {
+		panic("pool option is required")
+	}
+
 	l := slog.With(slog.String(logging.KeyDal, "redis"))
 
-	return &pool{
-		Pool: &redis.Pool{
-			MaxIdle:     3,                 // maximum number of idle connections in the pool (default is 3)
-			MaxActive:   0,                 // unlimited connections to the redis server (default is 10 connections)
-			IdleTimeout: 240 * time.Second, // 4 minutes idle timeout to match the redis server config (default is 300 seconds)
-			Dial: func() (redis.Conn, error) {
-				c, err := redis.Dial(
-					"tcp",
-					host,
-					redis.DialDatabase(db),
-					redis.DialUsername(username),
-					redis.DialPassword(password),
-				)
-				if err != nil {
-					return nil, err
-				}
+	poolConn := new(pool)
+	poolConn.l = l
+	if len(connOpts) != 0 {
+		p := new(redis.Pool)
+		for _, opt := range connOpts {
+			opt(p)
+		}
 
-				return c, nil
-			},
-		},
-		l: l,
+		poolConn.Pool = p
 	}
-}
 
-func Do(command string, args ...any) (reply any, err error) {
-	if Conn == nil {
-		return nil, errors.New("redis connection pool not initialised")
-	}
-	return Conn.Do(command, args...)
-}
-
-func DoCtx(ctx context.Context, command string, args ...any) (reply any, err error) {
-	if Conn == nil {
-		return nil, errors.New("redis connection pool not initialised")
-	}
-	return Conn.DoCtx(ctx, command, args...)
+	poolOpt(poolConn)
 }
 
 // Do will send a command to the server and returns the received reply on a connection from the pool.
@@ -116,4 +101,25 @@ func (p *pool) DoCtx(ctx context.Context, command string, args ...any) (reply an
 // Conn returns a redis connection from the pool.
 func (p *pool) Conn() redis.Conn {
 	return p.Pool.Get()
+}
+
+func Do(command string, args ...any) (reply any, err error) {
+	if conn == nil {
+		return nil, ErrRedisNotInitialised
+	}
+	return DoCtx(context.Background(), command, args...)
+}
+
+func DoCtx(ctx context.Context, command string, args ...any) (reply any, err error) {
+	if conn == nil {
+		return nil, ErrRedisNotInitialised
+	}
+	return conn.DoCtx(ctx, command, args...)
+}
+
+func Conn() redis.Conn {
+	if conn == nil {
+		return nil
+	}
+	return conn.Conn()
 }
