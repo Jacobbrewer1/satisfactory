@@ -25,7 +25,7 @@ func (s *service) watchServerInfo(ctx context.Context) {
 			slog.Debug("Context done")
 			return
 		default:
-			got, err := redisgo.ByteSlices(redis.Conn.DoCtx(ctx, "BLPOP", s.serverInfoListName, 0))
+			got, err := redisgo.ByteSlices(redis.DoCtx(ctx, "BLPOP", s.serverInfoListName, 0))
 			if err != nil {
 				slog.Error("Error getting message from redis info list", slog.String(logging.KeyError, err.Error()))
 				continue
@@ -50,7 +50,7 @@ func (s *service) watchServerDetails(ctx context.Context) {
 			slog.Debug("Context done")
 			return
 		default:
-			got, err := redisgo.ByteSlices(redis.Conn.DoCtx(ctx, "BLPOP", s.serverDetailsListName, 0))
+			got, err := redisgo.ByteSlices(redis.DoCtx(ctx, "BLPOP", s.serverDetailsListName, 0))
 			if err != nil {
 				slog.Error("Error getting message from redis details list", slog.String(logging.KeyError, err.Error()))
 				continue

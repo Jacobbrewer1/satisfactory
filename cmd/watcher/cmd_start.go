@@ -125,9 +125,8 @@ func (s *startCmd) setup(ctx context.Context, r *mux.Router) (service svc.Servic
 		return nil, fmt.Errorf("error getting secrets from vault: %w", err)
 	}
 
-	pool := redis.NewPool(v.GetString("redis.address"), v.GetInt("redis.db"),
+	redis.NewPool(v.GetString("redis.address"), v.GetInt("redis.db"),
 		v.GetString("redis.username"), v.GetString("redis.password"))
-	redis.Conn = pool
 
 	am := alerts.NewDiscordManager(vs.GetKvv2(v.GetString("vault.bot.alerts_url_key")).(string))
 	service = svc.NewService(ctx, am, v.GetString("redis.info_list_name"), v.GetString("redis.details_list_name"))
