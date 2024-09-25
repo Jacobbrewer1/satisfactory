@@ -110,7 +110,7 @@ func (s *service) handleBotStatus() {
 	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
 
-	currentNum := 0
+	currentNum := -1 // Start at -1 so the bot status is updated on the first iteration
 
 	for range ticker.C {
 		num, err := s.getPlayersConnected()
@@ -125,22 +125,25 @@ func (s *service) handleBotStatus() {
 
 		currentNum = num
 
-		err = s.s.UpdateStatusComplex(discordgo.UpdateStatusData{
-			Activities: []*discordgo.Activity{
-				{
-					Name: fmt.Sprintf("%d players", num),
-					Type: discordgo.ActivityTypeWatching,
-					URL:  "",
-				},
-			},
-		})
-		if err != nil {
+		if err := s.setBotStatusPlayerCount(num); err != nil {
 			slog.Error("Failed to update bot status", slog.String(logging.KeyError, err.Error()))
 			continue
 		}
 
 		slog.Debug("Bot status updated")
 	}
+}
+
+func (s *service) setBotStatusPlayerCount(num int) error {
+	return s.s.UpdateStatusComplex(discordgo.UpdateStatusData{
+		Activities: []*discordgo.Activity{
+			{
+				Name: fmt.Sprintf("%d players", num),
+				Type: discordgo.ActivityTypeWatching,
+				URL:  "",
+			},
+		},
+	})
 }
 
 func (s *service) getPlayersConnected() (int, error) {
