@@ -21,21 +21,35 @@ const (
 	EnvRedisHost = "REDIS_HOST"
 )
 
-type VaultDB struct {
-	Client         vault.Client
-	Vip            *viper.Viper
-	Enabled        bool
-	CurrentSecrets *vault.Secrets
+type DatabaseConnector interface {
+	ConnectDB() (*Database, error)
+}
+
+type databaseConnector struct {
+	ctx            context.Context
+	client         vault.Client
+	vip            *viper.Viper
+	currentSecrets *vault.Secrets
+}
+
+func NewDatabaseConnector(opts ...ConnectionOption) DatabaseConnector {
+	c := new(databaseConnector)
+
+	for _, opt := range opts {
+		opt(c)
+	}
+
+	return c
 }
 
 // ConnectDB connects to the database
-func ConnectDB(ctx context.Context, v *VaultDB) (*Database, error) {
-	if !v.Vip.IsSet("vault") {
+func (d *databaseConnector) ConnectDB() (*Database, error) {
+	if !d.vip.IsSet("vault") {
 		return nil, errors.New("no vault configuration found")
 	}
 
-	v.Vip.Set("database.connection_string", generateConnectionStr(v.Vip, v.CurrentSecrets))
-	sqlxDb, err := createConnection(v.Vip)
+	d.vip.Set("database.connection_string", generateConnectionStr(d.vip, d.currentSecrets))
+	sqlxDb, err := createConnection(d.vip)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to database: %w", err)
 	}
@@ -43,23 +57,23 @@ func ConnectDB(ctx context.Context, v *VaultDB) (*Database, error) {
 	db := NewDatabase(sqlxDb)
 
 	go func() {
-		err := vault.RenewLease(ctx, v.Client, v.Vip.GetString("vault.database.path"), v.CurrentSecrets.Secret, func() (*vault2.Secret, error) {
+		err := vault.RenewLease(d.ctx, d.client, d.vip.GetString("vault.database.path"), d.currentSecrets.Secret, func() (*vault2.Secret, error) {
 			slog.Warn("Vault lease expired, reconnecting to database")
 
-			vs, err := v.Client.GetSecret(ctx, v.Vip.GetString("vault.database.path"))
+			vs, err := d.client.GetSecret(d.ctx, d.vip.GetString("vault.database.path"))
 			if err != nil {
 				return nil, fmt.Errorf("error getting secrets from vault: %w", err)
 			}
 
-			dbConnectionString := generateConnectionStr(v.Vip, vs)
-			v.Vip.Set("database.connection_string", dbConnectionString)
+			dbConnectionString := generateConnectionStr(d.vip, vs)
+			d.vip.Set("database.connection_string", dbConnectionString)
 
-			newDb, err := createConnection(v.Vip)
+			newDb, err := createConnection(d.vip)
 			if err != nil {
 				return nil, fmt.Errorf("error connecting to database: %w", err)
 			}
 
-			if err := db.Reconnect(ctx, newDb); err != nil {
+			if err := db.Reconnect(d.ctx, newDb); err != nil {
 				return nil, fmt.Errorf("error reconnecting to database: %w", err)
 			}
 
