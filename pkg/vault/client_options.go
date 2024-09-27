@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	vault "github.com/hashicorp/vault/api"
 )
 
@@ -23,7 +24,7 @@ func WithGeneratedVaultClient(vaultAddress string) ClientOption {
 
 		vc, err := vault.NewClient(config)
 		if err != nil {
-			slog.Error("unable to initialize Vault client: %w", err)
+			slog.Error("Error creating vault client", slog.String(logging.KeyError, err.Error()))
 			os.Exit(1)
 		}
 
