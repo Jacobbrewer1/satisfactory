@@ -111,14 +111,22 @@ func (s *startCmd) setup(ctx context.Context, r *mux.Router) (service svc.Servic
 	}
 
 	slog.Info("Vault configuration found, attempting to connect")
-	vc, err := vault.NewClientUserPass(v)
+	vc, err := vault.NewClient(
+		vault.WithContext(ctx),
+		vault.WithGeneratedVaultClient(v.GetString("vault.address")),
+		vault.WithUserPassAuth(
+			v.GetString("vault.auth.username"),
+			v.GetString("vault.auth.password"),
+		),
+		vault.WithKvv2Mount(v.GetString("vault.kvv2_mount")),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("error creating vault client: %w", err)
 	}
 
 	slog.Debug("Vault client created")
 
-	vs, err := vc.GetSecret(ctx, v.GetString("vault.bot.token_path"))
+	vs, err := vc.GetKvSecretV2(ctx, v.GetString("vault.bot.secret_name"))
 	if errors.Is(err, vault.ErrSecretNotFound) {
 		return nil, fmt.Errorf("secrets not found in vault: %s", v.GetString("vault.bot.token_path"))
 	} else if err != nil {
@@ -130,7 +138,7 @@ func (s *startCmd) setup(ctx context.Context, r *mux.Router) (service svc.Servic
 		redis.FromViper(v)...,
 	)
 
-	am := alerts.NewDiscordManager(vs.GetKvv2(v.GetString("vault.bot.alerts_url_key")).(string))
+	am := alerts.NewDiscordManager(vs.Data[v.GetString("vault.bot.alerts_url_key")].(string))
 	service = svc.NewService(ctx, am, v.GetString("redis.info_list_name"), v.GetString("redis.details_list_name"))
 
 	r.HandleFunc("/metrics", uhttp.InternalOnly(promhttp.Handler())).Methods(http.MethodGet)
