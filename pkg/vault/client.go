@@ -21,6 +21,8 @@ type ClientHandler interface {
 }
 
 type Client interface {
+	ClientHandler
+
 	// GetKvSecretV2 returns a map of secrets for the given path.
 	GetKvSecretV2(ctx context.Context, name string) (*vault.KVSecret, error)
 

@@ -16,11 +16,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-	EnvDbConnStr = "DB_CONN_STR"
-	EnvRedisHost = "REDIS_HOST"
-)
-
 type DatabaseConnector interface {
 	ConnectDB() (*Database, error)
 }
@@ -29,7 +24,7 @@ type databaseConnector struct {
 	ctx            context.Context
 	client         vault.Client
 	vip            *viper.Viper
-	currentSecrets *vault.Secrets
+	currentSecrets *vault2.Secret
 }
 
 func NewDatabaseConnector(opts ...ConnectionOption) DatabaseConnector {
@@ -57,7 +52,7 @@ func (d *databaseConnector) ConnectDB() (*Database, error) {
 	db := NewDatabase(sqlxDb)
 
 	go func() {
-		err := vault.RenewLease(d.ctx, d.client, d.vip.GetString("vault.database.path"), d.currentSecrets.Secret, func() (*vault2.Secret, error) {
+		err := vault.RenewLease(d.ctx, d.client, d.vip.GetString("vault.database.path"), d.currentSecrets, func() (*vault2.Secret, error) {
 			slog.Warn("Vault lease expired, reconnecting to database")
 
 			vs, err := d.client.GetSecret(d.ctx, d.vip.GetString("vault.database.path"))
@@ -79,7 +74,7 @@ func (d *databaseConnector) ConnectDB() (*Database, error) {
 
 			slog.Info("Database reconnected")
 
-			return vs.Secret, nil
+			return vs, nil
 		})
 		if err != nil {
 			slog.Error("Error renewing vault lease", slog.String(logging.KeyError, err.Error()))
@@ -115,7 +110,7 @@ func createConnection(v *viper.Viper) (*sqlx.DB, error) {
 	return db, nil
 }
 
-func generateConnectionStr(v *viper.Viper, vs *vault.Secrets) string {
+func generateConnectionStr(v *viper.Viper, vs *vault2.Secret) string {
 	return fmt.Sprintf("%s:%s@tcp(%s)/%s?timeout=90s&multiStatements=true&parseTime=true",
 		vs.Data["username"],
 		vs.Data["password"],
