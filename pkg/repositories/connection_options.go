@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Jacobbrewer1/satisfactory/pkg/vault"
+	hashiVault "github.com/hashicorp/vault/api"
 	"github.com/spf13/viper"
 )
 
@@ -21,7 +22,7 @@ func WithViper(v *viper.Viper) ConnectionOption {
 	}
 }
 
-func WithCurrentSecrets(secrets *vault.Secrets) ConnectionOption {
+func WithCurrentSecrets(secrets *hashiVault.Secret) ConnectionOption {
 	return func(c *databaseConnector) {
 		c.currentSecrets = secrets
 	}
