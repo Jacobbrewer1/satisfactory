@@ -15,6 +15,26 @@ type MockClient struct {
 	mock.Mock
 }
 
+// Client provides a mock function with given fields:
+func (_m *MockClient) Client() *api.Client {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Client")
+	}
+
+	var r0 *api.Client
+	if rf, ok := ret.Get(0).(func() *api.Client); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*api.Client)
+		}
+	}
+
+	return r0
+}
+
 // GetKvSecretV2 provides a mock function with given fields: ctx, name
 func (_m *MockClient) GetKvSecretV2(ctx context.Context, name string) (*api.KVSecret, error) {
 	ret := _m.Called(ctx, name)
