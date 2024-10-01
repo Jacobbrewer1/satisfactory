@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Jacobbrewer1/goredis/redis"
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
-	"github.com/Jacobbrewer1/satisfactory/pkg/repositories/redis"
 	"github.com/alexliesenfeld/health"
 )
 

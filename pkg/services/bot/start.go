@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/Jacobbrewer1/goredis/redis"
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
-	"github.com/Jacobbrewer1/satisfactory/pkg/repositories/redis"
 	"github.com/bwmarrin/discordgo"
 	redisgo "github.com/gomodule/redigo/redis"
 )
