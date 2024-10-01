@@ -7,28 +7,28 @@ import (
 	"github.com/spf13/viper"
 )
 
-type ConnectionOption func(r *redis.Pool)
+type ConnectionOption func(r *pool)
 
-func WithMaxIdle(maxIdle int, def ...int) ConnectionOption {
-	return func(r *redis.Pool) {
+func WithMaxIdle(maxIdle int) ConnectionOption {
+	return func(r *pool) {
 		r.MaxIdle = maxIdle
 	}
 }
 
 func WithMaxActive(maxActive int) ConnectionOption {
-	return func(r *redis.Pool) {
+	return func(r *pool) {
 		r.MaxActive = maxActive
 	}
 }
 
 func WithIdleTimeout(idleTimeout int) ConnectionOption {
-	return func(r *redis.Pool) {
+	return func(r *pool) {
 		r.IdleTimeout = time.Duration(idleTimeout) * time.Second
 	}
 }
 
 func WithDial(dial func() (redis.Conn, error)) ConnectionOption {
-	return func(r *redis.Pool) {
+	return func(r *pool) {
 		r.Dial = dial
 	}
 }

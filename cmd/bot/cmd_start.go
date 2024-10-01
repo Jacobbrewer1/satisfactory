@@ -10,8 +10,8 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/Jacobbrewer1/goredis/redis"
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
-	"github.com/Jacobbrewer1/satisfactory/pkg/repositories/redis"
 	svc "github.com/Jacobbrewer1/satisfactory/pkg/services/bot"
 	uhttp "github.com/Jacobbrewer1/satisfactory/pkg/utils/http"
 	"github.com/Jacobbrewer1/vaulty/pkg/vaulty"
@@ -138,10 +138,12 @@ func (s *startCmd) setup(ctx context.Context, r *mux.Router) (service svc.Servic
 		return nil, fmt.Errorf("error getting secrets from vault: %w", err)
 	}
 
-	redis.NewPool(
+	if err := redis.NewPool(
 		redis.WithDefaultPool(),
 		redis.FromViper(v)...,
-	)
+	); err != nil {
+		return nil, fmt.Errorf("error creating redis pool: %w", err)
+	}
 
 	service = svc.NewService(vs.Data[v.GetString("vault.bot.secret_key")].(string))
 

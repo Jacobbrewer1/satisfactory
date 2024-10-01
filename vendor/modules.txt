@@ -1,3 +1,6 @@
+# github.com/Jacobbrewer1/goredis v0.1.0
+## explicit; go 1.23
+github.com/Jacobbrewer1/goredis/redis
 # github.com/Jacobbrewer1/vaulty v0.1.0
 ## explicit; go 1.23
 github.com/Jacobbrewer1/vaulty/pkg/logging
