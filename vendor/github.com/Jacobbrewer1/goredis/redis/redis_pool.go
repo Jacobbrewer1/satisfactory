@@ -51,6 +51,7 @@ func NewPool(poolOpt PoolOption, connOpts ...ConnectionOption) error {
 	}
 
 	poolConn := new(pool)
+	poolConn.Pool = new(redis.Pool)
 	if len(connOpts) != 0 {
 		for _, opt := range connOpts {
 			opt(poolConn)
