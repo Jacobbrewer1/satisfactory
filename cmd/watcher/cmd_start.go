@@ -15,7 +15,7 @@ import (
 	"github.com/Jacobbrewer1/satisfactory/pkg/repositories/redis"
 	svc "github.com/Jacobbrewer1/satisfactory/pkg/services/watcher"
 	uhttp "github.com/Jacobbrewer1/satisfactory/pkg/utils/http"
-	"github.com/Jacobbrewer1/satisfactory/pkg/vault"
+	"github.com/Jacobbrewer1/vaulty/pkg/vaulty"
 	"github.com/google/subcommands"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -111,14 +111,14 @@ func (s *startCmd) setup(ctx context.Context, r *mux.Router) (service svc.Servic
 	}
 
 	slog.Info("Vault configuration found, attempting to connect")
-	vc, err := vault.NewClient(
-		vault.WithContext(ctx),
-		vault.WithGeneratedVaultClient(v.GetString("vault.address")),
-		vault.WithUserPassAuth(
+	vc, err := vaulty.NewClient(
+		vaulty.WithContext(ctx),
+		vaulty.WithGeneratedVaultClient(v.GetString("vault.address")),
+		vaulty.WithUserPassAuth(
 			v.GetString("vault.auth.username"),
 			v.GetString("vault.auth.password"),
 		),
-		vault.WithKvv2Mount(v.GetString("vault.kvv2_mount")),
+		vaulty.WithKvv2Mount(v.GetString("vault.kvv2_mount")),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("error creating vault client: %w", err)
@@ -127,7 +127,7 @@ func (s *startCmd) setup(ctx context.Context, r *mux.Router) (service svc.Servic
 	slog.Debug("Vault client created")
 
 	vs, err := vc.GetKvSecretV2(ctx, v.GetString("vault.bot.secret_name"))
-	if errors.Is(err, vault.ErrSecretNotFound) {
+	if errors.Is(err, vaulty.ErrSecretNotFound) {
 		return nil, fmt.Errorf("secrets not found in vault: %s", v.GetString("vault.bot.token_path"))
 	} else if err != nil {
 		return nil, fmt.Errorf("error getting secrets from vault: %w", err)
