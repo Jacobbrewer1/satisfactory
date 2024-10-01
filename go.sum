@@ -1,5 +1,5 @@
-github.com/Jacobbrewer1/goredis v0.1.0 h1:XeVeCNjESHOE4DT12JFd9B6fTkQ3Q+U85Gls05f4AUw=
-github.com/Jacobbrewer1/goredis v0.1.0/go.mod h1:VIYOtSjsWTqO7zotDXEVjk6WUp56+Wjlmot8u0dhC1k=
+github.com/Jacobbrewer1/goredis v0.1.1 h1:aF9PjBmThunenJlSMaZb3Boz7WbsgQ4Fosf0Yj6fvYg=
+github.com/Jacobbrewer1/goredis v0.1.1/go.mod h1:8pxNdsR9Gmm69eyKHXhzzXRQh8b0Rd0DhvcMiFdrhBM=
 github.com/Jacobbrewer1/vaulty v0.1.0 h1:2+X2zD4Dtpes7MM9Ry+4T3rtAvYcrzwB49W/4EPLOi4=
 github.com/Jacobbrewer1/vaulty v0.1.0/go.mod h1:zMyyh/3xEbHRRtPYydWgRM6Tun6DkQTgvalnftdkC+U=
 github.com/alexliesenfeld/health v0.8.0 h1:lCV0i+ZJPTbqP7LfKG7p3qZBl5VhelwUFCIVWl77fgk=

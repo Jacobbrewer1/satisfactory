@@ -5,7 +5,7 @@ go 1.23
 toolchain go1.23.1
 
 require (
-	github.com/Jacobbrewer1/goredis v0.1.0
+	github.com/Jacobbrewer1/goredis v0.1.1
 	github.com/Jacobbrewer1/vaulty v0.1.0
 	github.com/alexliesenfeld/health v0.8.0
 	github.com/bwmarrin/discordgo v0.28.1
