@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	"github.com/gomodule/redigo/redis"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -43,30 +42,24 @@ type Pool interface {
 // pool represents a redis connection pool.
 type pool struct {
 	*redis.Pool
-
-	l *slog.Logger
 }
 
 // NewPool returns a new Pool.
-func NewPool(poolOpt PoolOption, connOpts ...ConnectionOption) {
+func NewPool(poolOpt PoolOption, connOpts ...ConnectionOption) error {
 	if poolOpt == nil {
-		panic("pool option is required")
+		return errors.New("no pool option provided")
 	}
 
-	l := slog.With(slog.String(logging.KeyDal, "redis"))
-
 	poolConn := new(pool)
-	poolConn.l = l
 	if len(connOpts) != 0 {
-		p := new(redis.Pool)
 		for _, opt := range connOpts {
-			opt(p)
+			opt(poolConn)
 		}
-
-		poolConn.Pool = p
 	}
 
 	poolOpt(poolConn)
+
+	return nil
 }
 
 // Do will send a command to the server and returns the received reply on a connection from the pool.
@@ -91,7 +84,7 @@ func (p *pool) DoCtx(ctx context.Context, command string, args ...any) (reply an
 
 	defer func(c redis.Conn) {
 		if err := c.Close(); err != nil {
-			p.l.Error("error closing connection", slog.String(logging.KeyError, err.Error()))
+			slog.Error("error closing connection", slog.String(loggingKeyError, err.Error()))
 		}
 	}(c)
 

@@ -8,8 +8,8 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/Jacobbrewer1/goredis/redis"
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
-	"github.com/Jacobbrewer1/satisfactory/pkg/repositories/redis"
 	redisgo "github.com/gomodule/redigo/redis"
 )
 
