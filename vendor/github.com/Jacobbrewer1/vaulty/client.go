@@ -8,7 +8,6 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/Jacobbrewer1/vaulty/pkg/logging"
 	hashiVault "github.com/hashicorp/vault/api"
 )
 
@@ -97,7 +96,7 @@ func (c *client) renewAuthInfo() {
 		return authInfo, nil
 	})
 	if err != nil {
-		slog.Error("unable to renew auth info", slog.String(logging.KeyError, err.Error()))
+		slog.Error("unable to renew auth info", slog.String(loggingKeyError, err.Error()))
 		os.Exit(1)
 	}
 }

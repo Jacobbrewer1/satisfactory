@@ -10,11 +10,11 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/Jacobbrewer1/goredis/redis"
+	"github.com/Jacobbrewer1/goredis"
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	svc "github.com/Jacobbrewer1/satisfactory/pkg/services/bot"
 	uhttp "github.com/Jacobbrewer1/satisfactory/pkg/utils/http"
-	"github.com/Jacobbrewer1/vaulty/pkg/vaulty"
+	"github.com/Jacobbrewer1/vaulty"
 	"github.com/google/subcommands"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -138,9 +138,9 @@ func (s *startCmd) setup(ctx context.Context, r *mux.Router) (service svc.Servic
 		return nil, fmt.Errorf("error getting secrets from vault: %w", err)
 	}
 
-	if err := redis.NewPool(
-		redis.WithDefaultPool(),
-		redis.FromViper(v)...,
+	if err := goredis.NewPool(
+		goredis.WithDefaultPool(),
+		goredis.FromViper(v)...,
 	); err != nil {
 		return nil, fmt.Errorf("error creating redis pool: %w", err)
 	}

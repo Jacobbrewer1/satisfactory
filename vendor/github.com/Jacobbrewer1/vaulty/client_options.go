@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/Jacobbrewer1/vaulty/pkg/logging"
 	hashiVault "github.com/hashicorp/vault/api"
 )
 
@@ -24,7 +23,7 @@ func WithGeneratedVaultClient(vaultAddress string) ClientOption {
 
 		vc, err := hashiVault.NewClient(config)
 		if err != nil {
-			slog.Error("Error creating vault client", slog.String(logging.KeyError, err.Error()))
+			slog.Error("Error creating vault client", slog.String(loggingKeyError, err.Error()))
 			os.Exit(1)
 		}
 

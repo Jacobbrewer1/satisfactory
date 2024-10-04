@@ -1,7 +1,5 @@
-package redis
+package vaulty
 
 const (
-	NetworkTCP = "tcp"
-
 	loggingKeyError = "err"
 )

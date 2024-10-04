@@ -1,7 +1,7 @@
-github.com/Jacobbrewer1/goredis v0.1.1 h1:aF9PjBmThunenJlSMaZb3Boz7WbsgQ4Fosf0Yj6fvYg=
-github.com/Jacobbrewer1/goredis v0.1.1/go.mod h1:8pxNdsR9Gmm69eyKHXhzzXRQh8b0Rd0DhvcMiFdrhBM=
-github.com/Jacobbrewer1/vaulty v0.1.0 h1:2+X2zD4Dtpes7MM9Ry+4T3rtAvYcrzwB49W/4EPLOi4=
-github.com/Jacobbrewer1/vaulty v0.1.0/go.mod h1:zMyyh/3xEbHRRtPYydWgRM6Tun6DkQTgvalnftdkC+U=
+github.com/Jacobbrewer1/goredis v0.1.3 h1:89vC/6z0Q/DiC22NvIYaGYoj5ChexO8Dm5v+2W3WbTI=
+github.com/Jacobbrewer1/goredis v0.1.3/go.mod h1:8pxNdsR9Gmm69eyKHXhzzXRQh8b0Rd0DhvcMiFdrhBM=
+github.com/Jacobbrewer1/vaulty v0.1.1 h1:6wWJpEUwBPovQ+orbr6QDZ4o0c9KkxfS97nkWlpOCGU=
+github.com/Jacobbrewer1/vaulty v0.1.1/go.mod h1:zMyyh/3xEbHRRtPYydWgRM6Tun6DkQTgvalnftdkC+U=
 github.com/alexliesenfeld/health v0.8.0 h1:lCV0i+ZJPTbqP7LfKG7p3qZBl5VhelwUFCIVWl77fgk=
 github.com/alexliesenfeld/health v0.8.0/go.mod h1:TfNP0f+9WQVWMQRzvMUjlws4ceXKEL3WR+6Hp95HUFc=
 github.com/armon/go-radix v0.0.0-20180808171621-7fddfc383310/go.mod h1:ufUuZ+zHj4x4TnLV4JWEpy2hxWSpsRywHrMgIH9cCH8=
