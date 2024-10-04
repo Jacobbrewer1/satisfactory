@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Jacobbrewer1/goredis/redis"
+	"github.com/Jacobbrewer1/goredis"
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	"github.com/Jacobbrewer1/satisfactory/pkg/utils"
 	"github.com/bwmarrin/discordgo"
@@ -30,7 +30,7 @@ func (s *service) onServerInfo(_ *discordgo.Session, i *discordgo.InteractionCre
 	defer cancel()
 
 	// Get the server info from redis
-	serverInfo, err := redisgo.StringMap(redis.DoCtx(ctx, "HGETALL", "docker_info"))
+	serverInfo, err := redisgo.StringMap(goredis.DoCtx(ctx, "HGETALL", "docker_info"))
 	if err != nil {
 		slog.Error("Error getting server info", slog.String(logging.KeyError, err.Error()))
 		return
@@ -67,7 +67,7 @@ func (s *service) onServerCredentials(_ *discordgo.Session, i *discordgo.Interac
 	defer cancel()
 
 	// Get the server credentials from redis
-	serverCredentials, err := redisgo.StringMap(redis.DoCtx(ctx, "HGETALL", "server_credentials"))
+	serverCredentials, err := redisgo.StringMap(goredis.DoCtx(ctx, "HGETALL", "server_credentials"))
 	if err != nil {
 		slog.Error("Error getting server credentials", slog.String(logging.KeyError, err.Error()))
 		return
@@ -104,7 +104,7 @@ func (s *service) onServerDetails(_ *discordgo.Session, i *discordgo.Interaction
 	defer cancel()
 
 	// Get the server details from redis
-	serverDetails, err := redisgo.StringMap(redis.DoCtx(ctx, "HGETALL", "server_details"))
+	serverDetails, err := redisgo.StringMap(goredis.DoCtx(ctx, "HGETALL", "server_details"))
 	if err != nil {
 		slog.Error("Error getting server details", slog.String(logging.KeyError, err.Error()))
 		return

@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/Jacobbrewer1/vaulty/pkg/logging"
 	hashiVault "github.com/hashicorp/vault/api"
 )
 
@@ -52,7 +51,7 @@ func RenewLease(ctx context.Context, client ClientHandler, name string, credenti
 		err = handleWatcherResult(res, func() {
 			newCreds, err := renewFunc()
 			if err != nil {
-				slog.Error("unable to renew credentials", slog.String(logging.KeyError, err.Error()))
+				slog.Error("unable to renew credentials", slog.String(loggingKeyError, err.Error()))
 				os.Exit(1) // Forces new credentials to be fetched
 			}
 

@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/Jacobbrewer1/goredis/redis"
+	"github.com/Jacobbrewer1/goredis"
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	redisgo "github.com/gomodule/redigo/redis"
 )
@@ -61,7 +61,7 @@ func (s *service) processInfoMessage(msg []byte) error {
 // Store and process the message
 func (s *service) handleDockerInfo(info dockerInfo) error {
 	// Get the current hash map of docker info
-	got, err := redisgo.StringMap(redis.DoCtx(s.ctx, "HGETALL", "docker_info"))
+	got, err := redisgo.StringMap(goredis.DoCtx(s.ctx, "HGETALL", "docker_info"))
 	if err != nil {
 		return fmt.Errorf("get docker info: %w", err)
 	}
@@ -83,7 +83,7 @@ func (s *service) handleDockerInfo(info dockerInfo) error {
 		values[i*2+1] = v.Field(i).String()
 	}
 
-	if _, err := redis.DoCtx(s.ctx, "HMSET", redisgo.Args{}.Add("docker_info").AddFlat(values)...); err != nil {
+	if _, err := goredis.DoCtx(s.ctx, "HMSET", redisgo.Args{}.Add("docker_info").AddFlat(values)...); err != nil {
 		return fmt.Errorf("store docker info: %w", err)
 	}
 
@@ -137,7 +137,7 @@ func (s *service) processDetailsMessage(msg []byte) error {
 
 func (s *service) handleServerDetails(details ServerGameState) error {
 	// Get the current hash map of server details
-	got, err := redisgo.StringMap(redis.DoCtx(s.ctx, "HGETALL", "server_details"))
+	got, err := redisgo.StringMap(goredis.DoCtx(s.ctx, "HGETALL", "server_details"))
 	if err != nil {
 		return fmt.Errorf("get server details: %w", err)
 	}
@@ -193,7 +193,7 @@ func (s *service) handleServerDetails(details ServerGameState) error {
 		}
 	}
 
-	if _, err := redis.DoCtx(s.ctx, "HMSET", redisgo.Args{}.Add("server_details").AddFlat(values)...); err != nil {
+	if _, err := goredis.DoCtx(s.ctx, "HMSET", redisgo.Args{}.Add("server_details").AddFlat(values)...); err != nil {
 		return fmt.Errorf("store server details: %w", err)
 	}
 

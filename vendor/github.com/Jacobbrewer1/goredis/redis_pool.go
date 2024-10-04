@@ -1,4 +1,4 @@
-package redis
+package goredis
 
 import (
 	"context"
@@ -42,6 +42,15 @@ type Pool interface {
 // pool represents a redis connection pool.
 type pool struct {
 	*redis.Pool
+
+	// addr is the address of the redis server (host:port).
+	addr string
+
+	// network is the network type to use when connecting to the redis server.
+	network string
+
+	// dialOpts are the dial options to use when connecting to the redis server.
+	dialOpts []redis.DialOption
 }
 
 // NewPool returns a new Pool.
@@ -50,11 +59,25 @@ func NewPool(poolOpt PoolOption, connOpts ...ConnectionOption) error {
 		return errors.New("no pool option provided")
 	}
 
-	poolConn := new(pool)
-	poolConn.Pool = new(redis.Pool)
+	poolConn := &pool{
+		Pool: new(redis.Pool),
+	}
 	if len(connOpts) != 0 {
 		for _, opt := range connOpts {
 			opt(poolConn)
+		}
+	}
+
+	switch {
+	case poolConn.addr == "":
+		return errors.New("no address provided")
+	case poolConn.network == "":
+		return errors.New("no network provided")
+	}
+
+	if poolConn.Dial == nil {
+		poolConn.Dial = func() (redis.Conn, error) {
+			return redis.Dial(poolConn.network, poolConn.addr, poolConn.dialOpts...)
 		}
 	}
 

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Jacobbrewer1/goredis/redis"
+	"github.com/Jacobbrewer1/goredis"
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	"github.com/alexliesenfeld/health"
 )
@@ -25,7 +25,7 @@ func healthHandler() http.Handler {
 		health.WithCheck(health.Check{
 			Name: "redis",
 			Check: func(ctx context.Context) error {
-				_, err := redis.DoCtx(ctx, "PING")
+				_, err := goredis.DoCtx(ctx, "PING")
 				return err
 			},
 			Timeout:            3 * time.Second,

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Jacobbrewer1/goredis/redis"
+	"github.com/Jacobbrewer1/goredis"
 	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	"github.com/bwmarrin/discordgo"
 	redisgo "github.com/gomodule/redigo/redis"
@@ -151,7 +151,7 @@ func (s *service) getPlayersConnected() (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	got, err := redisgo.StringMap(redis.DoCtx(ctx, "HGETALL", "server_details"))
+	got, err := redisgo.StringMap(goredis.DoCtx(ctx, "HGETALL", "server_details"))
 	if err != nil {
 		return 0, fmt.Errorf("failed to get players connected: %w", err)
 	}
