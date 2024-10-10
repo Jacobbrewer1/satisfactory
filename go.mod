@@ -6,7 +6,7 @@ toolchain go1.23.1
 
 require (
 	github.com/Jacobbrewer1/goredis v0.1.3
-	github.com/Jacobbrewer1/vaulty v0.1.1
+	github.com/Jacobbrewer1/vaulty v0.1.2
 	github.com/alexliesenfeld/health v0.8.0
 	github.com/bwmarrin/discordgo v0.28.1
 	github.com/gomodule/redigo v1.9.2
@@ -16,7 +16,7 @@ require (
 	github.com/prometheus/client_golang v1.20.4
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
-	github.com/vektra/mockery/v2 v2.46.1
+	github.com/vektra/mockery/v2 v2.46.2
 	golang.org/x/crypto v0.27.0
 	golang.org/x/time v0.6.0
 )
