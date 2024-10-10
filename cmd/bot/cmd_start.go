@@ -131,7 +131,7 @@ func (s *startCmd) setup(ctx context.Context, r *mux.Router) (service svc.Servic
 
 	slog.Debug("Vault client created")
 
-	vs, err := vc.GetKvSecretV2(ctx, v.GetString("vault.bot.secret_name"))
+	vs, err := vc.Path(v.GetString("vault.bot.secret_name")).GetKvSecretV2(ctx)
 	if errors.Is(err, vaulty.ErrSecretNotFound) {
 		return nil, fmt.Errorf("secrets not found in vault: %s", v.GetString("vault.bot.token_path"))
 	} else if err != nil {
