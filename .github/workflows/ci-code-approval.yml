@@ -89,9 +89,9 @@ jobs:
         uses: thollander/actions-comment-pull-request@v3
         with:
           # Full file path to the plan output
-          filePath: ${{ github.workspace }}/pr-report.md
-          pr_number: ${{ github.event.pull_request.number }}
-          create_if_not_exists: true
+          file-path: ${{ github.workspace }}/pr-report.md
+          pr-number: ${{ github.event.pull_request.number }}
+          create-if-not-exists: true
 
   code-approval:
     name: "Code Approval"
