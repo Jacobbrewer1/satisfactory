@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
+	"github.com/jacobbrewer1/satisfactory/pkg/logging"
 )
 
 // NotFoundHandler returns a handler that returns a 404 response.

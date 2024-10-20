@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Jacobbrewer1/goredis"
-	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	"github.com/bwmarrin/discordgo"
 	redisgo "github.com/gomodule/redigo/redis"
+	"github.com/jacobbrewer1/goredis"
+	"github.com/jacobbrewer1/satisfactory/pkg/logging"
 )
 
 func (s *service) Start() error {

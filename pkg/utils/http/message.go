@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/Jacobbrewer1/satisfactory/pkg/codegen/apis/common"
-	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
-	"github.com/Jacobbrewer1/satisfactory/pkg/utils"
+	"github.com/jacobbrewer1/satisfactory/pkg/codegen/apis/common"
+	"github.com/jacobbrewer1/satisfactory/pkg/logging"
+	"github.com/jacobbrewer1/satisfactory/pkg/utils"
 )
 
 // NewMessage creates a new Message.

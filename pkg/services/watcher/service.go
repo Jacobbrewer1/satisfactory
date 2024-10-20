@@ -3,7 +3,7 @@ package watcher
 import (
 	"context"
 
-	"github.com/Jacobbrewer1/satisfactory/pkg/alerts"
+	"github.com/jacobbrewer1/satisfactory/pkg/alerts"
 )
 
 type Service interface {

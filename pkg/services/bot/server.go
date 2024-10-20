@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Jacobbrewer1/goredis"
-	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
-	"github.com/Jacobbrewer1/satisfactory/pkg/utils"
 	"github.com/bwmarrin/discordgo"
 	redisgo "github.com/gomodule/redigo/redis"
+	"github.com/jacobbrewer1/goredis"
+	"github.com/jacobbrewer1/satisfactory/pkg/logging"
+	"github.com/jacobbrewer1/satisfactory/pkg/utils"
 )
 
 func (s *service) onServerInfo(_ *discordgo.Session, i *discordgo.InteractionCreate) {

@@ -10,13 +10,13 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/Jacobbrewer1/goredis"
-	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
-	svc "github.com/Jacobbrewer1/satisfactory/pkg/services/bot"
-	uhttp "github.com/Jacobbrewer1/satisfactory/pkg/utils/http"
-	"github.com/Jacobbrewer1/vaulty"
 	"github.com/google/subcommands"
 	"github.com/gorilla/mux"
+	"github.com/jacobbrewer1/goredis"
+	"github.com/jacobbrewer1/satisfactory/pkg/logging"
+	svc "github.com/jacobbrewer1/satisfactory/pkg/services/bot"
+	uhttp "github.com/jacobbrewer1/satisfactory/pkg/utils/http"
+	"github.com/jacobbrewer1/vaulty"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
 )
