@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Jacobbrewer1/goredis"
-	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	"github.com/alexliesenfeld/health"
+	"github.com/jacobbrewer1/goredis"
+	"github.com/jacobbrewer1/satisfactory/pkg/logging"
 )
 
 func healthHandler() http.Handler {

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Jacobbrewer1/satisfactory/pkg/codegen/apis/common"
-	"github.com/Jacobbrewer1/satisfactory/pkg/utils"
+	"github.com/jacobbrewer1/satisfactory/pkg/codegen/apis/common"
+	"github.com/jacobbrewer1/satisfactory/pkg/utils"
 	"github.com/stretchr/testify/require"
 )
 

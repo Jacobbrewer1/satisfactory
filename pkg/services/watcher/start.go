@@ -4,9 +4,9 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/Jacobbrewer1/goredis"
-	"github.com/Jacobbrewer1/satisfactory/pkg/logging"
 	redisgo "github.com/gomodule/redigo/redis"
+	"github.com/jacobbrewer1/goredis"
+	"github.com/jacobbrewer1/satisfactory/pkg/logging"
 )
 
 func (s *service) Start() error {
