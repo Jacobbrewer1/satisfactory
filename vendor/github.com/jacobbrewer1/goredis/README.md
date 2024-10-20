@@ -19,8 +19,8 @@ Please find the basic usage example below:
 package main
 
 import (
-	goredis "github.com/Jacobbrewer1/goredis/redis"
 	"github.com/gomodule/redigo/redis"
+	goredis "github.com/jacobbrewer1/goredis/redis"
 )
 
 func main() {
