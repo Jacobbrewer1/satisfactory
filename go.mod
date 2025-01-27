@@ -11,7 +11,7 @@ require (
 	github.com/google/subcommands v1.2.0
 	github.com/gorilla/mux v1.8.1
 	github.com/jacobbrewer1/goredis v0.1.4
-	github.com/jacobbrewer1/vaulty v0.1.5
+	github.com/jacobbrewer1/vaulty v0.1.7
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/prometheus/client_golang v1.20.5
 	github.com/spf13/viper v1.19.0
@@ -75,7 +75,7 @@ require (
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/mod v0.17.0 // indirect
-	golang.org/x/net v0.26.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/term v0.27.0 // indirect
