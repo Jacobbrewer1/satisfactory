@@ -9,9 +9,9 @@ type MockPoolOption struct {
 	mock.Mock
 }
 
-// Execute provides a mock function with given fields: p
-func (_m *MockPoolOption) Execute(p Pool) {
-	_m.Called(p)
+// Execute provides a mock function with given fields: r
+func (_m *MockPoolOption) Execute(r *pool) {
+	_m.Called(r)
 }
 
 // NewMockPoolOption creates a new instance of MockPoolOption. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

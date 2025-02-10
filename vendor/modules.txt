@@ -100,7 +100,7 @@ github.com/iancoleman/strcase
 # github.com/inconshreveable/mousetrap v1.1.0
 ## explicit; go 1.18
 github.com/inconshreveable/mousetrap
-# github.com/jacobbrewer1/goredis v0.1.4
+# github.com/jacobbrewer1/goredis v0.1.6
 ## explicit; go 1.23
 github.com/jacobbrewer1/goredis
 # github.com/jacobbrewer1/vaulty v0.1.5

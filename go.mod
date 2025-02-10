@@ -10,7 +10,7 @@ require (
 	github.com/gomodule/redigo v1.9.2
 	github.com/google/subcommands v1.2.0
 	github.com/gorilla/mux v1.8.1
-	github.com/jacobbrewer1/goredis v0.1.4
+	github.com/jacobbrewer1/goredis v0.1.6
 	github.com/jacobbrewer1/vaulty v0.1.5
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/prometheus/client_golang v1.20.5
