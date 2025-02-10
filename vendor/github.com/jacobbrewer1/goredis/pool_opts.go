@@ -7,46 +7,46 @@ import (
 	"github.com/spf13/viper"
 )
 
-type ConnectionOption func(r *pool)
+type PoolOption func(r *pool)
 
-func WithMaxIdle(maxIdle int) ConnectionOption {
+func WithMaxIdle(maxIdle int) PoolOption {
 	return func(r *pool) {
 		r.MaxIdle = maxIdle
 	}
 }
 
-func WithMaxActive(maxActive int) ConnectionOption {
+func WithMaxActive(maxActive int) PoolOption {
 	return func(r *pool) {
 		r.MaxActive = maxActive
 	}
 }
 
-func WithIdleTimeout(idleTimeout int) ConnectionOption {
+func WithIdleTimeout(idleTimeout int) PoolOption {
 	return func(r *pool) {
 		r.IdleTimeout = time.Duration(idleTimeout) * time.Second
 	}
 }
 
-func WithAddress(address string) ConnectionOption {
+func WithAddress(address string) PoolOption {
 	return func(r *pool) {
 		r.addr = address
 	}
 }
 
-func WithNetwork(network string) ConnectionOption {
+func WithNetwork(network string) PoolOption {
 	return func(r *pool) {
 		r.network = network
 	}
 }
 
-func WithDialOpts(dialOpts ...redis.DialOption) ConnectionOption {
+func WithDialOpts(dialOpts ...redis.DialOption) PoolOption {
 	return func(r *pool) {
 		r.dialOpts = dialOpts
 	}
 }
 
-func FromViper(v *viper.Viper) []ConnectionOption {
-	return []ConnectionOption{
+func FromViper(v *viper.Viper) []PoolOption {
+	return []PoolOption{
 		WithMaxIdle(v.GetInt(viperMaxIdle)),
 		WithMaxActive(v.GetInt(viperMaxActive)),
 		WithIdleTimeout(v.GetInt(viperIdleTimeout)),

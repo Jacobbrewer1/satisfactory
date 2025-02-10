@@ -11,14 +11,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-var (
-	// conn is the global redis connection pool.
-	conn Pool
-
-	// ErrRedisNotInitialised is returned when the redis connection pool is not initialised.
-	ErrRedisNotInitialised = errors.New("redis connection pool not initialised")
-)
-
 // Latency is the duration of Redis queries.
 var Latency = promauto.NewHistogramVec(
 	prometheus.HistogramOpts{
@@ -54,25 +46,20 @@ type pool struct {
 }
 
 // NewPool returns a new Pool.
-func NewPool(poolOpt PoolOption, connOpts ...ConnectionOption) error {
-	if poolOpt == nil {
-		return errors.New("no pool option provided")
-	}
-
+func NewPool(connOpts ...PoolOption) (Pool, error) {
 	poolConn := &pool{
 		Pool: new(redis.Pool),
 	}
-	if len(connOpts) != 0 {
-		for _, opt := range connOpts {
-			opt(poolConn)
-		}
+
+	for _, opt := range connOpts {
+		opt(poolConn)
 	}
 
 	switch {
 	case poolConn.addr == "":
-		return errors.New("no address provided")
+		return nil, errors.New("no address provided")
 	case poolConn.network == "":
-		return errors.New("no network provided")
+		return nil, errors.New("no network provided")
 	}
 
 	if poolConn.Dial == nil {
@@ -81,9 +68,7 @@ func NewPool(poolOpt PoolOption, connOpts ...ConnectionOption) error {
 		}
 	}
 
-	poolOpt(poolConn)
-
-	return nil
+	return poolConn, nil
 }
 
 // Do will send a command to the server and returns the received reply on a connection from the pool.
@@ -118,25 +103,4 @@ func (p *pool) DoCtx(ctx context.Context, command string, args ...any) (reply an
 // Conn returns a redis connection from the pool.
 func (p *pool) Conn() redis.Conn {
 	return p.Pool.Get()
-}
-
-func Do(command string, args ...any) (reply any, err error) {
-	if conn == nil {
-		return nil, ErrRedisNotInitialised
-	}
-	return DoCtx(context.Background(), command, args...)
-}
-
-func DoCtx(ctx context.Context, command string, args ...any) (reply any, err error) {
-	if conn == nil {
-		return nil, ErrRedisNotInitialised
-	}
-	return conn.DoCtx(ctx, command, args...)
-}
-
-func Conn() redis.Conn {
-	if conn == nil {
-		return nil
-	}
-	return conn.Conn()
 }
