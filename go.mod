@@ -1,7 +1,6 @@
 module github.com/jacobbrewer1/satisfactory
 
 go 1.23
-
 toolchain go1.23.1
 
 require (
@@ -18,7 +17,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/vektra/mockery/v2 v2.50.0
 	golang.org/x/crypto v0.31.0
-	golang.org/x/time v0.8.0
+	golang.org/x/time v0.11.0
 )
 
 require (
